@@ -10,7 +10,7 @@ import "imgui/imgui_impl_js"
 import "imgui/imgui_impl_webgl"
 
 import nvg "nanovg"
-//import nvg_gl "nanovg/gl"
+import nvg_gl "nanovg/gl"
 
 DISABLE_DOCKING :: #config(DISABLE_DOCKING, false)
 
@@ -32,7 +32,10 @@ app_run :: proc(doinit: Mainloop_Proc, doframe: Frame_Proc, dofini: Mainloop_Pro
 	g_app.doframe = doframe
 	g_app.dofini = dofini
 
-	if !gl.CreateCurrentContextById("webgl-canvas", gl.DEFAULT_CONTEXT_ATTRIBUTES) {
+	attrs := gl.DEFAULT_CONTEXT_ATTRIBUTES
+	attrs += {.stencil}
+
+	if !gl.CreateCurrentContextById("webgl-canvas", attrs) {
 		fmt.println("Error: Failed to create WebGL context!")
 		return
 	}
@@ -57,8 +60,8 @@ app_run :: proc(doinit: Mainloop_Proc, doframe: Frame_Proc, dofini: Mainloop_Pro
 	imgui_impl_js.Init("canvas")
 	imgui_impl_webgl.Init()
 
-	//g_app.vg = nvg_gl.Create({.ANTI_ALIAS, .STENCIL_STROKES})
-	//assert(g_app.vg != nil, "Failed to create NanoVG context!")
+	g_app.vg = nvg_gl.Create({.ANTI_ALIAS, .STENCIL_STROKES})
+	assert(g_app.vg != nil, "Failed to create NanoVG context!")
 
 	if doinit != nil do doinit()
 	g_app.inited = true
@@ -107,7 +110,7 @@ fini :: proc "contextless" () {
 
 	if g_app.dofini != nil do g_app.dofini()
 
-	//nvg_gl.Destroy(g_app.vg)
+	nvg_gl.Destroy(g_app.vg)
 	imgui_impl_webgl.Shutdown()
 	imgui_impl_js.Shutdown()
 	im.DestroyContext()

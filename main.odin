@@ -21,6 +21,7 @@ doframe :: proc(vg: ^nvg.Context, window_w, window_h: f32) {
 		app_mwheel(),
 	)
 	canvas_render(&the_canvas, vg, window_w, window_h)
+	im.ShowDemoWindow()
 }
 
 main :: proc() {

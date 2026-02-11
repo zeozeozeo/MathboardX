@@ -529,6 +529,9 @@ draw_stroke :: proc(
 	}
 }
 
+canvas_is_painting :: proc (c: ^Canvas) -> bool {
+	return c.was_drawing
+}
 
 render_debug_quadtree :: proc(vg: ^nvg.Context, c: ^Canvas, node: ^Quadtree_Node, view: AABB) {
 	if !aabb_intersects(node.bounds, view) do return
